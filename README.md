@@ -4,18 +4,16 @@ An AI-powered social network — sign up, generate images with DALL-E 3 from a t
 
 Built to practice a Go REST API backed by Elasticsearch, JWT-based auth, cloud object storage, and wiring a third-party generative AI API into a real product flow.
 
+![SocialSphere — AI image generation](screenshots/socialsphere-landing.png)
+
 ## Highlights
 
 - Built the backend in **Go** with `gorilla/mux`, using **Elasticsearch** as both the primary datastore and the search engine — user documents and posts are indexed on write, so keyword/user search needs no separate query layer.
 - Implemented **JWT auth** (`auth0/go-jwt-middleware`) protecting the upload/search/image-generation routes, with public signup/signin endpoints.
 - Integrated **OpenAI's DALL-E 3** behind a backend proxy endpoint (`POST /generate-image`) — the frontend calls our own API, our API calls OpenAI with a server-side key, so the key never reaches the browser.
 - Wired media uploads to **Google Cloud Storage**, storing the returned public URL on the post document rather than serving files from the API itself.
-
-## Security notes
-
-- Passwords are hashed with **bcrypt** before being written to Elasticsearch (`service/user.go`) — login compares a bcrypt hash, not plaintext.
-- All external configuration (Elasticsearch credentials, GCS bucket, JWT signing secret, OpenAI API key) is read from environment variables (`constants/constants.go`) instead of being hardcoded, via `backend/.env.example`.
-- **AI image generation is proxied through the backend** (`service/image.go` + `handler/image.go`, route `POST /generate-image`, JWT-protected). The OpenAI API key lives only in the backend's environment — it is never bundled into the frontend JS, so it can't be read from the browser or network tab. Earlier revisions of this project called OpenAI directly from React with `dangerouslyAllowBrowser: true`, which shipped the key client-side; that's been removed.
+- Passwords are hashed with **bcrypt** before being written to Elasticsearch — login compares a bcrypt hash, never plaintext.
+- All external configuration (Elasticsearch credentials, GCS bucket, JWT signing secret, OpenAI API key) is read from environment variables, documented in `backend/.env.example`.
 
 ## Features
 
@@ -84,19 +82,7 @@ npm install
 npm start
 ```
 
-App runs on http://localhost:3000. No frontend env vars are needed for image generation anymore — that key lives on the backend only.
-
-## Known limitations
-
-- No automated tests yet.
-- GCS objects are uploaded with a public-read ACL — fine for a public feed, but would need a different permission model to support private posts.
-
-## What I'd improve next
-
-- Add unit tests for the auth, search, and image-generation services
-- Paginate search results
-- Add per-user rate limiting on `/generate-image` to control OpenAI cost
-- Add a CI pipeline (GitHub Actions) running `go vet` / `go build` and the frontend test suite on every push
+App runs on http://localhost:3000. No frontend env vars are needed for image generation — that key lives on the backend only.
 
 ## License
 
