@@ -1,8 +1,8 @@
 # SocialSphere
 
-An AI-powered social network — sign up, generate images with DALL-E 3 from a text prompt, post them (or any photo/video), and search posts by keyword or user. Go backend, React frontend, Elasticsearch for search, Google Cloud Storage for media.
+**Go REST backend for an AI-powered social network.** A `gorilla/mux` API that uses **Elasticsearch** as both the system of record and the search index, secures routes with **JWT** and **bcrypt**, proxies **OpenAI DALL-E 3** server-side so provider credentials never reach the browser, and re-hosts generated media to **Google Cloud Storage**. A React (Ant Design + MUI) frontend sits on top as a thin client over this API.
 
-Built to practice a Go REST API backed by Elasticsearch, JWT-based auth, cloud object storage, and wiring a third-party generative AI API into a real product flow.
+What a user sees: sign up, generate an image from a text prompt, post it (or any photo/video), and search posts by keyword or user.
 
 ![SocialSphere — AI image generation](screenshots/socialsphere-landing.png)
 
